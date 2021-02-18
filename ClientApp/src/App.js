@@ -6,6 +6,7 @@ import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import { FetchWorker } from './components/Worker/FetchWorker';
 import { AddWorker } from './components/Worker/AddWorker';
+import { EditWorker } from './components/Worker/EditWorker';
 
 import './custom.css'
 
@@ -20,6 +21,7 @@ export default class App extends Component {
         <Route path='/fetch-data' component={FetchData} />
         <Route path='/fetch-worker' component={FetchWorker} />
         <Route path='/add-worker' component={AddWorker} />
+        <Route path='/edit-worker' component={EditWorker} /> 
       </Layout>
     );
   }

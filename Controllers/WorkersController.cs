@@ -114,6 +114,8 @@ namespace NPL.Controllers
         [HttpPost]
         public async Task<ActionResult<Worker>> PostWorker(Worker worker)
         {
+
+            worker.WorkerId = Guid.NewGuid();
             _context.Workers.Add(worker);
             await _context.SaveChangesAsync();
 
