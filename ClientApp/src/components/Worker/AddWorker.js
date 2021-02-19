@@ -1,5 +1,7 @@
 ﻿import React, { Component } from 'react';
 import $ from 'jquery';
+import Select from 'react-select';
+
 export class AddWorker extends Component {
     constructor(props) {
 
@@ -16,12 +18,172 @@ export class AddWorker extends Component {
             recruiterid: '',
             branchid: '',
             ethnicity: '',
-            sickleavesleft:''
+            sickleavesleft: '',
+            options:[],
+            selectedOption: null,
+            recruiteroptions: [],
+            recruiterselectedOption: null,
+            branchoptions: [],
+            branchselectedOption:null
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.logChange = this.logChange.bind(this);
+
+
+
+    }
+
+
+    componentDidMount() {
+        console.log("add worker");
+
+        let self = this;
+
+
+
+        fetch('/api/WorkerTypes', {
+
+
+
+            method: 'GET'
+
+        }).then(function (response) {
+
+
+
+            if (response.status >= 400) {
+
+                throw new Error("Bad response from server");
+
+            }
+
+
+
+            return response.json();
+
+
+
+        }).then(function (data) {
+
+            console.log("WorkerTypes", data);
+
+            var arr = [];
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                arr.push({
+                    value: data[i].workerTypeId,
+                    label: data[i].type
+                });
+            }
+            self.setState({
+                options: [...self.state.options, ...arr]
+            });
+           
+            console.log(self.state.options);
+
+
+        }).catch(err => {
+
+            console.log("caught it", err);
+
+        });
+
+
+        fetch('api/Recruiters', {
+
+
+
+            method: 'GET'
+
+        }).then(function (response) {
+
+
+
+            if (response.status >= 400) {
+
+                throw new Error("Bad response from server");
+
+            }
+
+
+
+            return response.json();
+
+
+
+        }).then(function (data) {
+
+            console.log("Recruiter", data);
+
+            var arr = [];
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                arr.push({
+                    value: data[i].recruiterId,
+                    label: data[i].firstName +' ' + data[i].lastName
+                });
+            }
+            self.setState({
+                recruiteroptions: [...self.state.recruiteroptions, ...arr]
+            });
+
+            console.log(self.state.recruiteroptions);
+
+
+        }).catch(err => {
+
+            console.log("caught it", err);
+
+        });
+
+        fetch('api/Branches', {
+
+
+
+            method: 'GET'
+
+        }).then(function (response) {
+
+
+
+            if (response.status >= 400) {
+
+                throw new Error("Bad response from server");
+
+            }
+
+
+
+            return response.json();
+
+
+
+        }).then(function (data) {
+
+            console.log("Braches", data);
+
+            var arr = [];
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                arr.push({
+                    value: data[i].branchId,
+                    label: data[i].name
+                });
+            }
+            self.setState({
+                branchoptions: [...self.state.branchoptions, ...arr]
+            });
+
+            console.log(self.state.branchoptions);
+
+
+        }).catch(err => {
+
+            console.log("caught it", err);
+
+        });
 
 
 
@@ -68,8 +230,8 @@ export class AddWorker extends Component {
                 throw new Error("Bad response from server");
 
             }
-
-            return response.json();
+            alert("Worker Added");
+            
 
         }).then(function (data) {
 
@@ -80,7 +242,7 @@ export class AddWorker extends Component {
                 this.setState({ msg: "Thanks for registering" });
 
             }
-
+            
 
 
         }).catch(function (err) {
@@ -100,16 +262,30 @@ export class AddWorker extends Component {
         this.setState({ [e.target.name]: e.target.value });
 
     }
-
+    handleChange = selectedOption => {
+        this.setState({ selectedOption });
+        this.setState({ workertypeid: selectedOption.value });
+        console.log(`Option selected:`, selectedOption);
+    };
+    handleRecruiterChange = recruiterselectedOption => {
+        this.setState({ recruiterselectedOption });
+        this.setState({ recruiterid: recruiterselectedOption.value });
+        console.log(`Option selected:`, recruiterselectedOption);
+    };
+    handleBranchChange = branchselectedOption => {
+        this.setState({ branchselectedOption });
+        this.setState({ branchid: branchselectedOption.value });
+        console.log(`Option selected:`, branchselectedOption);
+    };
     render() {
-
+        const { selectedOption } = this.state;
         return (<form onSubmit={this.handleSubmit} method="POST">
 
             <h1>Add Worker</h1>
             <table>
             <tr>
-               <td><label>First Name</label></td>
-               <td><input onChange={this.logChange} value={this.state.firstname} name='firstname' /> </td>
+                <td><label>First Name</label></td>
+                <td><input onChange={this.logChange} value={this.state.firstname} name='firstname' required /> </td>
             </tr>
             <tr>
                 <td><label>Last Name</label> </td>
@@ -128,17 +304,17 @@ export class AddWorker extends Component {
                 <td><input onChange={this.logChange} value={this.state.startdate} name='startdate' /></td>
             </tr>
             <tr>
-                <td><label>Worker Type Id</label></td>
-                <td><input onChange={this.logChange} value={this.state.workertypeid} name='workertypeid' /></td>
-             </tr>
+                    <td><label>Worker Type</label></td>
+                    <td><Select value={this.state.selectedOption} onChange={this.handleChange} options={this.state.options} placeholder={'Select an option'} /></td>
+            </tr>
 
             <tr>
-                <td><label>Recruiter ID Id</label></td>
-                <td><input onChange={this.logChange} value={this.state.recruiterid} name='recruiterid' /></td>
+                <td><label>Recruiter</label></td>
+                <td><Select value={this.state.recruiterselectedOption} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} /></td>
             </tr>
             <tr>
-                <td><label>Branch Id</label></td>
-                <td><input onChange={this.logChange} value={this.state.branchid} name='branchid' /></td>
+                <td><label>Branch</label></td>
+                <td><Select value={this.state.branchselectedOption} onChange={this.handleBranchChange} options={this.state.branchoptions} /></td>
             </tr>
             <tr>
                 <td><label>Ethnicity</label></td>
