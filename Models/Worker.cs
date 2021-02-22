@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -18,8 +19,14 @@ namespace NPL.Models
         public Guid WorkerId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime Dob { get; set; }
         public string Email { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
         public DateTime StartDate { get; set; }
         public Guid WorkerTypeId { get; set; }
         public Guid RecruiterId { get; set; }

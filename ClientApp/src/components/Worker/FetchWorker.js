@@ -2,7 +2,31 @@
 import Modal from 'react-modal';
 import { Link } from "react-router-dom";
 import Select from 'react-select';
+import moment from 'moment';
 
+function getFormattedDate(date) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+
+    return day + '-' + month + '-' + year;
+}
+function getReverseFormattedDate(date) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+
+    return year + '-' + month + '-' + day;
+}
+ 
 export class FetchWorker extends Component {
 
     constructor(props) {
@@ -21,14 +45,17 @@ export class FetchWorker extends Component {
             workerType: [],
             workertypeid:'',
             recruiter: [],
-            recruiterid:'',
-            branch: '',
+            recruiterid: '',
+            branchid:'',
+            branch: [],
             ethnicity: '',
             sickLeavesLeft: '',
             options: [],
             selectedOption: null,
             recruiteroptions: [],
-            recruiterselectedOption:null,
+            recruiterselectedOption: null,
+            branchoptions: [],
+            branchselectedOption:null,
             showModal:false
 
         };
@@ -72,7 +99,30 @@ export class FetchWorker extends Component {
 
         }).then(function (data) {
 
-            self.setState({ worker: data });
+           // self.setState({ worker: data });
+
+            var wrk = [];
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                wrk.push({
+                    workerId: data[i].workerId,
+                    firstName: data[i].firstName,
+                    lastName: data[i].lastName,
+                    dob: getFormattedDate(new Date(data[i].dob)),
+                    email: data[i].email,
+                    startDate: getFormattedDate(new Date(data[i].startDate)),
+                    workerType: data[i].workerType,
+                    recruiter: data[i].recruiter,
+                    branch: data[i].branch,
+                    ethnicity: data[i].ethnicity,
+                    sickLeavesLeft: data[i].sickLeavesLeft
+                });
+            }
+            self.setState({
+                worker: [...self.state.worker, ...wrk]
+            });
+
+            console.log(self.state.worker);
 
 
 
@@ -179,25 +229,78 @@ export class FetchWorker extends Component {
 
         });
 
+        fetch('api/Branches', {
+
+
+
+            method: 'GET'
+
+        }).then(function (response) {
+
+
+
+            if (response.status >= 400) {
+
+                throw new Error("Bad response from server");
+
+            }
+
+
+
+            return response.json();
+
+
+
+        }).then(function (data) {
+
+            console.log("Braches", data);
+
+            var arr = [];
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                arr.push({
+                    value: data[i].branchId,
+                    label: data[i].name
+                });
+            }
+            self.setState({
+                branchoptions: [...self.state.branchoptions, ...arr]
+            });
+
+            console.log(self.state.branchoptions);
+
+
+        }).catch(err => {
+
+            console.log("caught it", err);
+
+        });
+
     }
 
     handleEdit(event) {
         //alert("Edit");
         event.preventDefault();
+        //var dob1 = getReverseFormattedDate(new Date(JSON.stringify(this.state.dob)));
+        //var startDate = this.state.startDate;
+        console.log("old date", this.state.dob);
+        //console.log(JSON.stringify(this.state.dob).toLocaleDateString());
+        //console.log(getReverseFormattedDate(moment(JSON.stringify(this.state.dob),"DD-MM-YYYY")));
+       // console.log("Date of Birth", getReverseFormattedDate(Date.parse(JSON.stringify(this.state.dob))))
         var data = {
             workerId: this.state.workerId,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
-            dob: this.state.dob,
+            dob: '1981-01-06',
             email: this.state.email,
-            startDate: this.state.startDate,
+            startDate: '2021-06-06',
             workerTypeId: this.state.workertypeid,
             recruiterId: this.state.recruiterid,
-            branchId: 'EA18066E-5E22-408F-8956-981BEF578C3C',
+            branchId: this.state.branchid,
             ethnicity: this.state.ethnicity,
             sickLeavesLeft: this.state.sickLeavesLeft
         };
-
+        console.log("Posted", data);
         //let that = this;
 
         fetch('api/Workers/' + data.workerId, {
@@ -253,6 +356,21 @@ export class FetchWorker extends Component {
             }
         }
         console.log("Recruiter", recruiter);
+
+        var branch = [];
+        console.log("Modal", this.state.branchoptions);
+        console.log("Member", member.branch);
+        for (var i = 0; i < this.state.branchoptions.length; i++) {
+            if (member.branch.name == this.state.branchoptions[i].label) {
+                this.setState({ branchid: this.state.branchoptions[i].value });
+                branch.push({
+                    value: this.state.branchoptions[i].value,
+                    label: this.state.branchoptions[i].label
+                });
+
+            }
+        }
+        console.log("Branch", branch);
         this.setState({
             workerId: member.workerId,
             firstName: member.firstName,
@@ -262,7 +380,7 @@ export class FetchWorker extends Component {
             startDate: member.startDate,
             workerType: workertype,
             recruiter: recruiter,
-            branch: member.branch.name,
+            branch: branch,
             ethnicity: member.ethnicity,
             sickLeavesLeft: member.sickLeavesLeft,
             showModal: true
@@ -283,6 +401,13 @@ export class FetchWorker extends Component {
         this.setState({ recruiterid: recruiterselectedOption.value });
         console.log(`Option selected:`, recruiterselectedOption);
     }
+    handleBranchChange = branchselectedOption => {
+        this.setState({ branchselectedOption });
+        this.setState({ branchid: branchselectedOption.value });
+        console.log(`Option selected:`, branchselectedOption);
+    }
+    
+    
     logChange(e) {
 
         this.setState({
@@ -294,7 +419,7 @@ export class FetchWorker extends Component {
 
 
     }
-
+    
     render() {
 
 
@@ -366,7 +491,7 @@ export class FetchWorker extends Component {
 
                                 <td>{member.sickLeavesLeft}</td>
                                 
-                                <td><a onClick={() => this.handleOpenModal(member)}><button class="ui button">Edit</button></a></td>
+                                <td><a onClick={() => this.handleOpenModal(member)}><button className="ui button">Edit</button></a></td>
 
 
                             </tr>)
@@ -381,44 +506,89 @@ export class FetchWorker extends Component {
                     ariaHideApp={false}
                 > <form onSubmit={this.handleEdit} method="PUT">
                         <h1>Edit Worker</h1> <br />
-                        <div><label>First Name</label>
-                        <input onChange={this.logChange} value={this.state.firstName} name='firstName' /></div>
-                        <div>
-                        <label>Last Name</label>
-                        <input onChange={this.logChange} value={this.state.lastName} name='lastName' />
-                        </div>
-                        <div>
-                        <label>Date of Birth</label>
-                        <input onChange={this.logChange} value={this.state.dob} name='dob' />
-                        </div>
-                        <div>
-                        <label>Email</label>
-                        <input onChange={this.logChange} value={this.state.email} name='email' />
-                        </div>
-                        <div>
-                        <label>Start Date</label>
-                        <input onChange={this.logChange} value={this.state.startDate} name='startDate' />
-                        </div>
-                        <div>
-                        <label>Worker Type</label>
-                        <Select defaultValue={this.state.workerType}  onChange={this.handleChange} options={this.state.options}  /></div>
-                        <div>
-                        </div>
-                        <div>
-                        <label>Recruiter</label>
-                        <Select defaultValue={this.state.recruiter} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} />
-                        </div>
-                        <div>
-                            <label>Branch</label>
-                            <input onChange={this.logChange} value={this.state.branch} name='branch' />
-                        </div>
-                        <div>
-                            <label>Ethnicity</label>
-                            <input onChange={this.logChange} value={this.state.ethnicity} name='ethnicity' />
-                        </div>
-                        <div>
-                            <label>Sick Leaves Left</label>
-                            <input onChange={this.logChange} value={this.state.sickLeavesLeft} name='ethnicity' />
+                        <div id="resp-table-body">
+                            <div id="resp-table-body">
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>First Name</label>
+                                    </div>
+                                <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.firstName} name='firstName' />
+                                     </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Last Name</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.lastName} name='lastName' />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Date of Birth</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.dob} name='dob' />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Email</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.email} name='email' />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Start Date</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.startDate} name='startDate' />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Worker Type</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <Select defaultValue={this.state.workerType} onChange={this.handleChange} options={this.state.options} />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Recruiter</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <Select defaultValue={this.state.recruiter} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Branch</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <Select defaultValue={this.state.branch} onChange={this.handleBranchChange} options={this.state.branchoptions} />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Ethnicity</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.ethnicity} name='ethnicity' />
+                                    </div>
+                                </div>
+                                <div class="resp-table-row">
+                                    <div class="table-body-cell">
+                                        <label>Sick Leaves Left</label>
+                                    </div>
+                                    <div class="table-body-cell">
+                                        <input onChange={this.logChange} value={this.state.sickLeavesLeft} name='sickleavesleft' />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <button>Submit</button>
                         <button onClick={this.handleCloseModal}>Close Modal</button>

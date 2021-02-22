@@ -282,49 +282,94 @@ export class AddWorker extends Component {
         return (<form onSubmit={this.handleSubmit} method="POST">
 
             <h1>Add Worker</h1>
-            <table>
-            <tr>
-                <td><label>First Name</label></td>
-                <td><input onChange={this.logChange} value={this.state.firstname} name='firstname' required /> </td>
-            </tr>
-            <tr>
-                <td><label>Last Name</label> </td>
-                <td><input onChange={this.logChange} value={this.state.lastname} name='lastname' /> </td>
-            </tr>
-            <tr>
-                <td><label>DOB</label></td>
-                <td><input onChange={this.logChange} value={this.state.dob} name='dob' /></td>
-            </tr>
-            <tr>
-                <td><label>Email</label></td>
-                <td><input onChange={this.logChange} value={this.state.email} name='email' /></td>
-            </tr>
-            <tr>
-                <td><label>Start Date</label></td>
-                <td><input onChange={this.logChange} value={this.state.startdate} name='startdate' /></td>
-            </tr>
-            <tr>
-                    <td><label>Worker Type</label></td>
-                    <td><Select value={this.state.selectedOption} onChange={this.handleChange} options={this.state.options} placeholder={'Select an option'} /></td>
-            </tr>
+            <div id="resp-table">
+                <div id="resp-table-body">
+                    
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>First Name</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.firstname} name='firstname' required />
+                        </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>Last Name</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.lastname} name='lastname' />
+                            </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>DOB</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.dob} name='dob' />
+                            </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>Email</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.email} name='email' />
+                            </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>Start Date</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.startdate} name='startdate' />
+                            </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>Worker Type</label>
+                        </div>
+                        <div class="table-body-cell">
+                           
+                            <Select value={this.state.selectedOption} onChange={this.handleChange} options={this.state.options} placeholder={'Select an option'} />
+                         </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                                <label>Recruiter</label>
+                        </div>
+                        <div class="table-body-cell">
+                                <Select value={this.state.recruiterselectedOption} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} />
+                         </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>Branch</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <Select value={this.state.branchselectedOption} onChange={this.handleBranchChange} options={this.state.branchoptions} />
+                         </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>Ethnicity</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.ethnicity} name='ethnicity' />
+                            </div>
+                    </div>
+                    <div class="resp-table-row">
+                        <div class="table-body-cell">
+                            <label>SickLeaves Left</label>
+                        </div>
+                        <div class="table-body-cell">
+                            <input onChange={this.logChange} value={this.state.sickleavesleft} name='sickleavesleft' />
+                            </div>
+                    </div>
+                </div>
+            </div>
 
-            <tr>
-                <td><label>Recruiter</label></td>
-                <td><Select value={this.state.recruiterselectedOption} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} /></td>
-            </tr>
-            <tr>
-                <td><label>Branch</label></td>
-                <td><Select value={this.state.branchselectedOption} onChange={this.handleBranchChange} options={this.state.branchoptions} /></td>
-            </tr>
-            <tr>
-                <td><label>Ethnicity</label></td>
-                <td><input onChange={this.logChange} value={this.state.ethnicity} name='ethnicity' /></td>
-            </tr>
-            <tr>
-                <td><label>SickLeaves Left</label></td>
-                <td><input onChange={this.logChange} value={this.state.sickleavesleft} name='sickleavesleft' /></td>
-            </tr>  
-          </table>
+            
             <div><button>Submit</button></div>
         </form>);
 
