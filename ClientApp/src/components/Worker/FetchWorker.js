@@ -15,18 +15,14 @@ function getFormattedDate(date) {
 
     return day + '-' + month + '-' + year;
 }
-function getReverseFormattedDate(date) {
-    var year = date.getFullYear();
 
-    var month = (1 + date.getMonth()).toString();
-    month = month.length > 1 ? month : '0' + month;
+function getReverseDate(str) {
+    var res = str.split("-");
+    console.log(res);
+    return res[2] + '-' + res[1] + '-' + res[0];
 
-    var day = date.getDate().toString();
-    day = day.length > 1 ? day : '0' + day;
-
-    return year + '-' + month + '-' + day;
 }
- 
+
 export class FetchWorker extends Component {
 
     constructor(props) {
@@ -281,19 +277,17 @@ export class FetchWorker extends Component {
     handleEdit(event) {
         //alert("Edit");
         event.preventDefault();
-        //var dob1 = getReverseFormattedDate(new Date(JSON.stringify(this.state.dob)));
-        //var startDate = this.state.startDate;
+       
         console.log("old date", this.state.dob);
-        //console.log(JSON.stringify(this.state.dob).toLocaleDateString());
-        //console.log(getReverseFormattedDate(moment(JSON.stringify(this.state.dob),"DD-MM-YYYY")));
-       // console.log("Date of Birth", getReverseFormattedDate(Date.parse(JSON.stringify(this.state.dob))))
+        var dob1 = this.state.dob;
+        console.log((getReverseDate(this.state.dob)));
         var data = {
             workerId: this.state.workerId,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
-            dob: '1981-01-06',
+            dob: getReverseDate(this.state.dob),
             email: this.state.email,
-            startDate: '2021-06-06',
+            startDate: getReverseDate(this.state.startDate),
             workerTypeId: this.state.workertypeid,
             recruiterId: this.state.recruiterid,
             branchId: this.state.branchid,
@@ -315,11 +309,13 @@ export class FetchWorker extends Component {
             body: JSON.stringify(data)
 
         }).then(function (response) {
+            alert("Data has been Edited Close Modal And Refresh to view Changes");
             if (response.status >= 400) {
                 throw new Error("Bad response from server");
             }
             return response.json();
         }).then(function (data) {
+            
             console.log("Success", data);
         });
 

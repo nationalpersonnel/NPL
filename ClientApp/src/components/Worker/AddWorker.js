@@ -2,6 +2,13 @@
 import $ from 'jquery';
 import Select from 'react-select';
 
+
+function getReverseDate(str) {
+    var res = str.split("-");
+    console.log(res);
+    return res[2] + '-' + res[1] + '-' + res[0];
+
+}
 export class AddWorker extends Component {
     constructor(props) {
 
@@ -197,9 +204,9 @@ export class AddWorker extends Component {
             WorkerId: this.state.workerid,
             FirstName: this.state.firstname,
             LastName: this.state.lastname,
-            Dob: this.state.dob,
+            Dob: getReverseDate(this.state.dob),
             Email: this.state.email,
-            StartDate: this.state.startdate,
+            StartDate: getReverseDate(this.state.startdate),
             WorkerTypeId: this.state.workertypeid,
             RecruiterId: this.state.recruiterid,
             BranchId: this.state.branchid,
@@ -298,7 +305,7 @@ export class AddWorker extends Component {
                             <label>Last Name</label>
                         </div>
                         <div class="table-body-cell">
-                            <input onChange={this.logChange} value={this.state.lastname} name='lastname' />
+                            <input onChange={this.logChange} value={this.state.lastname} name='lastname' required />
                             </div>
                     </div>
                     <div class="resp-table-row">
@@ -306,7 +313,7 @@ export class AddWorker extends Component {
                             <label>DOB</label>
                         </div>
                         <div class="table-body-cell">
-                            <input onChange={this.logChange} value={this.state.dob} name='dob' />
+                            <input onChange={this.logChange} value={this.state.dob} name='dob' required />
                             </div>
                     </div>
                     <div class="resp-table-row">
@@ -314,7 +321,7 @@ export class AddWorker extends Component {
                             <label>Email</label>
                         </div>
                         <div class="table-body-cell">
-                            <input onChange={this.logChange} value={this.state.email} name='email' />
+                            <input onChange={this.logChange} value={this.state.email} name='email' required />
                             </div>
                     </div>
                     <div class="resp-table-row">
@@ -339,7 +346,7 @@ export class AddWorker extends Component {
                                 <label>Recruiter</label>
                         </div>
                         <div class="table-body-cell">
-                                <Select value={this.state.recruiterselectedOption} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} />
+                            <Select value={this.state.recruiterselectedOption} onChange={this.handleRecruiterChange} options={this.state.recruiteroptions} placeholder={'Select an option'} />
                          </div>
                     </div>
                     <div class="resp-table-row">
@@ -347,7 +354,7 @@ export class AddWorker extends Component {
                             <label>Branch</label>
                         </div>
                         <div class="table-body-cell">
-                            <Select value={this.state.branchselectedOption} onChange={this.handleBranchChange} options={this.state.branchoptions} />
+                            <Select value={this.state.branchselectedOption} onChange={this.handleBranchChange} options={this.state.branchoptions} placeholder={'Select an option'} />
                          </div>
                     </div>
                     <div class="resp-table-row">
