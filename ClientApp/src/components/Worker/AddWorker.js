@@ -1,13 +1,26 @@
 ﻿import React, { Component } from 'react';
 import $ from 'jquery';
 import Select from 'react-select';
+import DatePicker from "react-datepicker";
 
+import "react-datepicker/dist/react-datepicker.css";
 
 function getReverseDate(str) {
     var res = str.split("-");
     console.log(res);
     return res[2] + '-' + res[1] + '-' + res[0];
 
+}
+function getReverseFormattedDate(date) {
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+
+    return year + '-' + month + '-' + day;
 }
 export class AddWorker extends Component {
     constructor(props) {
@@ -199,14 +212,14 @@ export class AddWorker extends Component {
     handleSubmit(event) {
 
         event.preventDefault();
-
+        console.log(this.state.dob);
         var data = {
             WorkerId: this.state.workerid,
             FirstName: this.state.firstname,
             LastName: this.state.lastname,
-            Dob: getReverseDate(this.state.dob),
+            Dob: getReverseFormattedDate(this.state.dob),
             Email: this.state.email,
-            StartDate: getReverseDate(this.state.startdate),
+            StartDate: getReverseFormattedDate(this.state.startdate),
             WorkerTypeId: this.state.workertypeid,
             RecruiterId: this.state.recruiterid,
             BranchId: this.state.branchid,
@@ -313,8 +326,8 @@ export class AddWorker extends Component {
                             <label>DOB</label>
                         </div>
                         <div class="table-body-cell">
-                            <input onChange={this.logChange} value={this.state.dob} name='dob' required />
-                            </div>
+                            <DatePicker selected={this.state.dob} onChange={date => this.setState({ dob: date })} dateFormat="dd-MM-yyyy" />
+                        </div>
                     </div>
                     <div class="resp-table-row">
                         <div class="table-body-cell">
@@ -329,8 +342,8 @@ export class AddWorker extends Component {
                             <label>Start Date</label>
                         </div>
                         <div class="table-body-cell">
-                            <input onChange={this.logChange} value={this.state.startdate} name='startdate' />
-                            </div>
+                            <DatePicker selected={this.state.startdate} onChange={date => this.setState({ startdate: date })} dateFormat="dd-MM-yyyy" />
+                        </div>
                     </div>
                     <div class="resp-table-row">
                         <div class="table-body-cell">
