@@ -307,7 +307,7 @@ export class FetchWorker extends Component {
             body: JSON.stringify(data)
 
         }).then(function (response) {
-            alert("Data has been Edited Close Modal And Refresh to view Changes");
+            alert("Data has been Edited Close Modal to view Changes");
             if (response.status >= 400) {
                 throw new Error("Bad response from server");
             }
@@ -383,6 +383,7 @@ export class FetchWorker extends Component {
 
     handleCloseModal() {
         this.setState({ showModal: false });
+        window.location.reload(true);
     }
 
     handleChange = selectedOption => {
