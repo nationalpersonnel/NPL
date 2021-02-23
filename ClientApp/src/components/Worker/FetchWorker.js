@@ -278,9 +278,7 @@ export class FetchWorker extends Component {
         //alert("Edit");
         event.preventDefault();
        
-        console.log("old date", this.state.dob);
-        var dob1 = this.state.dob;
-        console.log((getReverseDate(this.state.dob)));
+        
         var data = {
             workerId: this.state.workerId,
             firstName: this.state.firstName,
@@ -437,7 +435,7 @@ export class FetchWorker extends Component {
 
                         <th>DOB</th>
 
-                        <th>EMAIL</th>
+                        <th>Email</th>
 
                         <th>Start Date</th>
 
@@ -465,7 +463,6 @@ export class FetchWorker extends Component {
 
                             <tr key={member.workerId}>
 
-                               
 
                                 <td>{member.firstName}</td>
 
@@ -581,7 +578,7 @@ export class FetchWorker extends Component {
                                         <label>Sick Leaves Left</label>
                                     </div>
                                     <div class="table-body-cell">
-                                        <input onChange={this.logChange} value={this.state.sickLeavesLeft} name='sickleavesleft' />
+                                        <input onChange={this.logChange} value={this.state.sickLeavesLeft} name='sickLeavesLeft' />
                                     </div>
                                 </div>
                             </div>
