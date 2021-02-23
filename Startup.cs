@@ -31,7 +31,8 @@ namespace NPL
                 configuration.RootPath = "ClientApp/build";
             });
 
-            var connection = @"Server=.\;Database=NPL;Trusted_Connection=True;ConnectRetryCount=0;MultipleActiveResultSets=True";
+            //var connection = @"Server=.\;Database=NPL;Trusted_Connection=True;ConnectRetryCount=0;MultipleActiveResultSets=True";
+            var connection = Configuration.GetConnectionString("myDb1");
             services.AddDbContext<NPLContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>

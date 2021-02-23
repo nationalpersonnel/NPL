@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
@@ -8,6 +9,7 @@ namespace NPL.Models
 {
     public partial class NPLContext : DbContext
     {
+        private string connectionString;
         public NPLContext()
         {
         }
@@ -15,6 +17,12 @@ namespace NPL.Models
         public NPLContext(DbContextOptions<NPLContext> options)
             : base(options)
         {
+            var builder = new ConfigurationBuilder();
+            builder.AddJsonFile("appsettings.json", optional: false);
+
+            var configuration = builder.Build();
+
+            connectionString = configuration.GetConnectionString("myDb1").ToString();
         }
 
         public virtual DbSet<ApprovedToWork> ApprovedToWorks { get; set; }
@@ -32,7 +40,8 @@ namespace NPL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=.\\;Database=NPL;Trusted_Connection=True;MultipleActiveResultSets=True");
+                //optionsBuilder.UseSqlServer("Server=.\\;Database=NPL;Trusted_Connection=True;MultipleActiveResultSets=True");
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
