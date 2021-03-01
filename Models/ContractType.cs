@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace NPL.Models
 {
-    public partial class WorkerType
+    public partial class ContractType
     {
-        public Guid WorkerTypeId { get; set; }
+        public Guid ContractTypeId { get; set; }
         public string Type { get; set; }
     }
 }

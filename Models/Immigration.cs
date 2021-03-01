@@ -11,6 +11,7 @@ namespace NPL.Models
         public Guid WorkerId { get; set; }
         public string VisaType { get; set; }
         public DateTime VisaExpiryDate { get; set; }
+        public string RightToWork { get; set; }
 
         public virtual Worker Worker { get; set; }
     }

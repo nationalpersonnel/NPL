@@ -23,14 +23,18 @@ namespace NPL.Models
             var configuration = builder.Build();
 
             connectionString = configuration.GetConnectionString("myDb1").ToString();
+
         }
 
         public virtual DbSet<ApprovedToWork> ApprovedToWorks { get; set; }
         public virtual DbSet<Branch> Branches { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
+        public virtual DbSet<CompanyAsset> CompanyAssets { get; set; }
+        public virtual DbSet<ContractType> ContractTypes { get; set; }
         public virtual DbSet<Immigration> Immigrations { get; set; }
         public virtual DbSet<JobOffer> JobOffers { get; set; }
         public virtual DbSet<Recruiter> Recruiters { get; set; }
+        public virtual DbSet<Tax> Taxes { get; set; }
         public virtual DbSet<TimeSheet> TimeSheets { get; set; }
         public virtual DbSet<Worker> Workers { get; set; }
         public virtual DbSet<WorkerType> WorkerTypes { get; set; }
@@ -40,7 +44,6 @@ namespace NPL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=.\\;Database=NPL;Trusted_Connection=True;MultipleActiveResultSets=True");
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
@@ -71,6 +74,8 @@ namespace NPL.Models
 
                 entity.Property(e => e.BranchId).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.Division).HasMaxLength(100);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -89,11 +94,33 @@ namespace NPL.Models
                 entity.Property(e => e.LastName).HasMaxLength(100);
             });
 
+            modelBuilder.Entity<CompanyAsset>(entity =>
+            {
+                entity.ToTable("CompanyAsset");
+
+                entity.Property(e => e.CompanyAssetId).ValueGeneratedNever();
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(100)
+                    .IsFixedLength(true);
+            });
+
+            modelBuilder.Entity<ContractType>(entity =>
+            {
+                entity.ToTable("ContractType");
+
+                entity.Property(e => e.ContractTypeId).ValueGeneratedNever();
+
+                entity.Property(e => e.Type).HasMaxLength(100);
+            });
+
             modelBuilder.Entity<Immigration>(entity =>
             {
                 entity.ToTable("Immigration");
 
                 entity.Property(e => e.ImmigrationId).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.RightToWork).HasMaxLength(100);
 
                 entity.Property(e => e.VisaExpiryDate).HasColumnType("date");
 
@@ -153,6 +180,23 @@ namespace NPL.Models
                     .HasMaxLength(100);
             });
 
+            modelBuilder.Entity<Tax>(entity =>
+            {
+                entity.ToTable("Tax");
+
+                entity.Property(e => e.TaxId).ValueGeneratedNever();
+
+                entity.Property(e => e.Irdnumber)
+                    .HasMaxLength(100)
+                    .HasColumnName("IRDNumber");
+
+                entity.Property(e => e.KiwiSaver).HasMaxLength(100);
+
+                entity.Property(e => e.Leaves).HasMaxLength(100);
+
+                entity.Property(e => e.TaxCode).HasMaxLength(100);
+            });
+
             modelBuilder.Entity<TimeSheet>(entity =>
             {
                 entity.ToTable("TimeSheet");
@@ -173,6 +217,8 @@ namespace NPL.Models
 
                 entity.Property(e => e.WorkerId).HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.BankAccountNumber).HasMaxLength(100);
+
                 entity.Property(e => e.Dob)
                     .HasColumnType("date")
                     .HasColumnName("DOB");
@@ -192,21 +238,6 @@ namespace NPL.Models
                     .HasMaxLength(100);
 
                 entity.Property(e => e.StartDate).HasColumnType("date");
-
-                entity.HasOne(d => d.Branch)
-                    .WithMany(p => p.Workers)
-                    .HasForeignKey(d => d.BranchId)
-                    .HasConstraintName("FK_Worker_Branch");
-
-                entity.HasOne(d => d.Recruiter)
-                    .WithMany(p => p.Workers)
-                    .HasForeignKey(d => d.RecruiterId)
-                    .HasConstraintName("FK_Worker_Recruiter");
-
-                entity.HasOne(d => d.WorkerType)
-                    .WithMany(p => p.Workers)
-                    .HasForeignKey(d => d.WorkerTypeId)
-                    .HasConstraintName("FK_Worker_WorkerType");
             });
 
             modelBuilder.Entity<WorkerType>(entity =>
